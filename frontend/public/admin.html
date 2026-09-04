@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SONECOMX PRO — Dashboard Admin</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+</head>
+
+<body>
+
+  <div class="admin-wrap">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+      <div class="admin-logo">
+        <div>
+          <div class="admin-logo-text">
+            <span>SONECOMX</span><span> PRO</span>
+          </div>
+          <div class="admin-logo-badge">ADMIN PANEL</div>
+        </div>
+      </div>
+
+      <nav>
+        <div class="admin-nav-section">
+          <div class="admin-nav-label">Principal</div>
+          <div class="admin-nav-item active" onclick="showSection('dashboard')"><i
+              class="ti ti-layout-dashboard"></i>Tableau de bord</div>
+          <div class="admin-nav-item" onclick="showSection('analytics')"><i class="ti ti-chart-bar"></i>Analytiques
+          </div>
+          <div class="admin-nav-item" onclick="showSection('traffic')"><i class="ti ti-chart-line"></i>Trafic Live <span
+              class="admin-nav-badge warn">Live</span></div>
+        </div>
+        <div class="admin-nav-section">
+          <div class="admin-nav-label">Boutique</div>
+          <div class="admin-nav-item" onclick="showSection('orders')"><i class="ti ti-shopping-cart"></i>Commandes <span
+              class="admin-nav-badge" id="ordBadge">14</span></div>
+          <div class="admin-nav-item" onclick="showSection('products')"><i class="ti ti-package"></i>Produits</div>
+          <div class="admin-nav-item" onclick="showSection('categories')"><i class="ti ti-category"></i>Catégories</div>
+          <div class="admin-nav-item" onclick="showSection('promos')"><i class="ti ti-tag"></i>Promotions</div>
+          <div class="admin-nav-item" onclick="showSection('invoices')"><i class="ti ti-receipt"></i>Factures</div>
+        </div>
+        <div class="admin-nav-section">
+          <div class="admin-nav-label">Clients</div>
+          <div class="admin-nav-item" onclick="showSection('users')"><i class="ti ti-users"></i>Utilisateurs</div>
+          <div class="admin-nav-item" onclick="showSection('pro-accounts')"><i class="ti ti-building"></i>Comptes Pro
+          </div>
+          <div class="admin-nav-item" onclick="showSection('messages')"><i class="ti ti-message"></i>Messages <span
+              class="admin-nav-badge">3</span></div>
+        </div>
+        <div class="admin-nav-section">
+          <div class="admin-nav-label">Système</div>
+          <div class="admin-nav-item" onclick="showSection('quotes')"><i class="ti ti-file-invoice"></i>Devis <span
+              class="admin-nav-badge warn">5</span></div>
+          <div class="admin-nav-item" onclick="showSection('delivery')"><i class="ti ti-truck"></i>Livraisons</div>
+          <div class="admin-nav-item" onclick="showSection('settings')"><i class="ti ti-settings"></i>Paramètres</div>
+          <div class="admin-nav-item" onclick="showSection('logs')"><i class="ti ti-list-details"></i>Logs</div>
+        </div>
+        <div class="admin-nav-section"
+          style="margin-top:auto;border-top:1px solid rgba(255,255,255,0.06);padding-top:8px;">
+          <div class="admin-nav-item" onclick="window.location.href='/'"><i class="ti ti-world"></i>Voir le site</div>
+          <div class="admin-nav-item" style="color:rgba(198,40,40,0.8);" onclick="logout()"><i
+              class="ti ti-logout"></i>Déconnexion</div>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="admin-main">
+
+      <!-- TOP BAR -->
+      <header class="admin-topbar">
+        <div class="admin-topbar-title" id="pageTitle">Tableau de bord</div>
+        <div class="admin-topbar-actions">
+          <div class="period-tabs">
+            <button class="period-tab" onclick="setPeriod(this,'7j')">7j</button>
+            <button class="period-tab active" onclick="setPeriod(this,'30j')">30j</button>
+            <button class="period-tab" onclick="setPeriod(this,'90j')">90j</button>
+            <button class="period-tab" onclick="setPeriod(this,'Année')">Année</button>
+          </div>
+          <button class="admin-topbar-btn" onclick="exportData()"><i class="ti ti-download"></i> Export</button>
+          <button class="admin-topbar-btn primary" onclick="refreshData()"><i class="ti ti-refresh"></i>
+            Actualiser</button>
+          <div class="admin-notif"><i class="ti ti-bell"></i><span class="admin-notif-dot"></span></div>
+          <div class="admin-avatar" title="Admin SONECOMX">AD</div>
+        </div>
+      </header>
+
+      <!-- CONTENT -->
+      <div class="admin-content" id="adminContent">
+
+        <!-- ── DASHBOARD SECTION ─────────────────────────── -->
+        <div id="section-dashboard">
+
+          <div class="admin-page-header">
+            <div>
+              <div class="admin-page-title">Tableau de bord</div>
+              <div class="admin-page-sub" id="dashDate">Chargement...</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span
+                style="font-size:11px;color:#2E7D32;display:flex;align-items:center;gap:5px;background:#E8F5E9;padding:5px 10px;border-radius:6px;font-weight:600;">
+                <span
+                  style="width:7px;height:7px;border-radius:50%;background:#2E7D32;display:inline-block;animation:pulse 2s infinite;"></span>
+                Système actif
+              </span>
+            </div>
+          </div>
+
+          <!-- KPI Cards -->
+          <div class="kpi-grid">
+            <div class="kpi-card c-blue">
+              <div class="kpi-label"><i class="ti ti-users"></i> Visiteurs uniques</div>
+              <div class="kpi-value">24 381</div>
+              <div class="kpi-trend up"><i class="ti ti-trending-up"></i> +18.4% vs mois précédent</div>
+            </div>
+            <div class="kpi-card c-green">
+              <div class="kpi-label"><i class="ti ti-shopping-cart"></i> Commandes</div>
+              <div class="kpi-value" id="kpiOrders">—</div>
+              <div class="kpi-trend up" id="kpiOrdersTrend"><i class="ti ti-trending-up"></i> Chargement...</div>
+            </div>
+            <div class="kpi-card c-amber">
+              <div class="kpi-label"><i class="ti ti-currency-franc"></i> Chiffre d'affaires</div>
+              <div class="kpi-value" id="kpiRevenue">—</div>
+              <div class="kpi-trend up" id="kpiRevenueTrend"><i class="ti ti-trending-up"></i> Chargement...</div>
+            </div>
+            <div class="kpi-card c-red">
+              <div class="kpi-label"><i class="ti ti-percentage"></i> Taux de rebond</div>
+              <div class="kpi-value">34.2%</div>
+              <div class="kpi-trend up"><i class="ti ti-trending-down"></i> −3.1% amélioration</div>
+            </div>
+          </div>
+
+          <!-- Charts Row 1 -->
+          <div class="charts-row">
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div>
+                  <div class="chart-card-title">Trafic & Commandes — 30 derniers jours</div>
+                  <div class="chart-card-sub">Visiteurs journaliers vs commandes passées</div>
+                </div>
+                <div style="font-size:11px;color:#607D8B;">Mai 2025</div>
+              </div>
+              <div class="chart-legend">
+                <span class="chart-legend-item"><span class="chart-legend-dot"
+                    style="background:#1565C0;"></span>Visiteurs</span>
+                <span class="chart-legend-item"><span class="chart-legend-dot"
+                    style="background:#C62828;border-radius:50%;"></span>Commandes</span>
+              </div>
+              <div style="height:220px;position:relative;">
+                <canvas id="trafficChart"></canvas>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div>
+                  <div class="chart-card-title">Sources de trafic</div>
+                  <div class="chart-card-sub">Origine des visites</div>
+                </div>
+              </div>
+              <div class="chart-legend" style="margin-bottom:6px;">
+                <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#1565C0;"></span>Direct
+                  32%</span>
+                <span class="chart-legend-item"><span class="chart-legend-dot"
+                    style="background:#2E7D32;"></span>Organique 28%</span>
+                <span class="chart-legend-item"><span class="chart-legend-dot"
+                    style="background:#E65100;"></span>Réseaux 22%</span>
+                <span class="chart-legend-item"><span class="chart-legend-dot"
+                    style="background:#C62828;"></span>Référents 11%</span>
+                <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#90A4AE;"></span>Autres
+                  7%</span>
+              </div>
+              <div style="height:190px;position:relative;">
+                <canvas id="sourceChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Row 2 -->
+          <div class="charts-row2">
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div>
+                  <div class="chart-card-title">CA mensuel 2025</div>
+                  <div class="chart-card-sub">En millions de F CFA</div>
+                </div>
+              </div>
+              <div class="chart-legend">
+                <span class="chart-legend-item"><span class="chart-legend-dot"
+                    style="background:#1565C0;"></span>2025</span>
+                <span class="chart-legend-item"><span class="chart-legend-dot"
+                    style="background:#BBDEFB;"></span>2024</span>
+              </div>
+              <div style="height:180px;position:relative;">
+                <canvas id="revenueChart"></canvas>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div>
+                  <div class="chart-card-title">Pages vues par langue</div>
+                  <div class="chart-card-sub">Distribution internationale</div>
+                </div>
+              </div>
+              <div style="height:200px;position:relative;">
+                <canvas id="langChart"></canvas>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div>
+                  <div class="chart-card-title">Trafic par heure</div>
+                  <div class="chart-card-sub">Moyenne aujourd'hui</div>
+                </div>
+              </div>
+              <div class="chart-legend">
+                <span class="chart-legend-item"><span class="chart-legend-dot"
+                    style="background:#1565C0;"></span>Visiteurs/heure</span>
+              </div>
+              <div style="height:180px;position:relative;">
+                <canvas id="hourChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Row -->
+          <div class="bottom-row">
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div class="chart-card-title">Dernières commandes</div>
+                <button class="admin-action-btn" onclick="showSection('orders')">Voir tout <i
+                    class="ti ti-arrow-right"></i></button>
+              </div>
+              <div class="admin-table-wrap">
+                <table class="admin-table" id="recentOrdersTable">
+                  <thead>
+                    <tr>
+                      <th>Commande</th>
+                      <th>Client</th>
+                      <th>Montant</th>
+                      <th>Statut</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recentOrdersBody">
+                    <tr>
+                      <td colspan="5" style="text-align:center;padding:20px;color:#607D8B;">Chargement...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div class="chart-card" style="flex:1;">
+                <div class="chart-card-header" style="margin-bottom:12px;">
+                  <div class="chart-card-title">Rayons les + visités</div>
+                  <span style="font-size:11px;color:#607D8B;">Ce mois</span>
+                </div>
+                <div id="topCategoriesBars"></div>
+              </div>
+              <div class="chart-card">
+                <div class="chart-card-header" style="margin-bottom:10px;">
+                  <div class="chart-card-title">Activité récente</div>
+                </div>
+                <div class="activity-feed" id="activityFeed">
+                  <div style="text-align:center;padding:16px;color:#607D8B;font-size:12px;">Chargement...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Additional Stats Row -->
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;">
+            <div class="chart-card">
+              <div class="chart-card-header" style="margin-bottom:14px;">
+                <div>
+                  <div class="chart-card-title">Stock critique</div>
+                  <div class="chart-card-sub">Produits avec stock ≤ 5</div>
+                </div>
+                <span class="admin-badge danger" id="lowStockBadge">—</span>
+              </div>
+              <div id="lowStockList">
+                <div style="font-size:12px;color:#607D8B;text-align:center;padding:12px;">Chargement...</div>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-card-header" style="margin-bottom:14px;">
+                <div>
+                  <div class="chart-card-title">Devis en attente</div>
+                  <div class="chart-card-sub">À traiter en priorité</div>
+                </div>
+                <button class="admin-action-btn" onclick="showSection('quotes')">Gérer</button>
+              </div>
+              <div id="pendingQuotesList">
+                <div style="font-size:12px;color:#607D8B;text-align:center;padding:12px;">Chargement...</div>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-card-header" style="margin-bottom:14px;">
+                <div>
+                  <div class="chart-card-title">Utilisateurs actifs</div>
+                  <div class="chart-card-sub">Par rôle</div>
+                </div>
+              </div>
+              <div style="height:150px;position:relative;">
+                <canvas id="usersChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /section-dashboard -->
+
+        <!-- ── PRODUCTS SECTION ─────────────────────────── -->
+        <div id="section-products" style="display:none;">
+          <div class="admin-page-header">
+            <div>
+              <div class="admin-page-title">Produits</div>
+              <div class="admin-page-sub" id="productsCount">Chargement...</div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <input class="admin-search-input" placeholder="Rechercher un produit..." id="productSearch"
+                oninput="filterProducts()">
+              <select class="admin-select" id="productCatFilter" onchange="filterProducts()">
+                <option value="">Toutes les catégories</option>
+                <option>Boulonnerie & Sécurité</option>
+                <option>Portatif & Accessoires</option>
+                <option>Électricité</option>
+                <option>EPI & Signalisation</option>
+                <option>Peinture & Étanchéité</option>
+                <option>Matériel chantier</option>
+              </select>
+              <button class="admin-topbar-btn primary" onclick="openProductModal()"><i class="ti ti-plus"></i> Nouveau
+                produit</button>
+            </div>
+          </div>
+          <div class="card-section">
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Produit</th>
+                    <th>SKU</th>
+                    <th>Catégorie</th>
+                    <th>Prix</th>
+                    <th>Stock</th>
+                    <th>Ventes</th>
+                    <th>Note</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="productsBody">
+                  <tr>
+                    <td colspan="9" style="text-align:center;padding:24px;color:#607D8B;">
+                      <div class="admin-spinner"></div> Chargement...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ORDERS SECTION ──────────────────────────── -->
+        <div id="section-orders" style="display:none;">
+          <div class="admin-page-header">
+            <div>
+              <div class="admin-page-title">Commandes</div>
+              <div class="admin-page-sub" id="ordersCount">Chargement...</div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <input class="admin-search-input" placeholder="N° commande, client..." id="orderSearch">
+              <select class="admin-select" id="orderStatusFilter" onchange="loadOrders()">
+                <option value="">Tous les statuts</option>
+                <option value="pending">En attente</option>
+                <option value="confirmed">Confirmée</option>
+                <option value="processing">En préparation</option>
+                <option value="shipped">Expédiée</option>
+                <option value="delivered">Livrée</option>
+                <option value="cancelled">Annulée</option>
+              </select>
+              <button class="admin-topbar-btn" onclick="exportOrders()"><i class="ti ti-download"></i> Export
+                CSV</button>
+            </div>
+          </div>
+          <div class="card-section">
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>N° Commande</th>
+                    <th>Client</th>
+                    <th>Date</th>
+                    <th>Total</th>
+                    <th>Paiement</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="ordersBody">
+                  <tr>
+                    <td colspan="7" style="text-align:center;padding:24px;color:#607D8B;">Chargement...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="ordersPagination" style="display:flex;justify-content:center;gap:6px;padding:16px 0;"></div>
+          </div>
+        </div>
+
+        <!-- ── USERS SECTION ───────────────────────────── -->
+        <div id="section-users" style="display:none;">
+          <div class="admin-page-header">
+            <div>
+              <div class="admin-page-title">Utilisateurs</div>
+              <div class="admin-page-sub" id="usersCount">Chargement...</div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <input class="admin-search-input" placeholder="Nom, email..." id="userSearch">
+              <select class="admin-select" id="userRoleFilter">
+                <option value="">Tous les rôles</option>
+                <option value="admin">Administrateur</option>
+                <option value="pro">Compte Pro</option>
+                <option value="user">Particulier</option>
+              </select>
+            </div>
+          </div>
+          <div class="card-section">
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Utilisateur</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Rôle</th>
+                    <th>Inscription</th>
+                    <th>Dernière connexion</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="usersBody">
+                  <tr>
+                    <td colspan="8" style="text-align:center;padding:24px;color:#607D8B;">Chargement...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── QUOTES SECTION ─────────────────────────── -->
+        <div id="section-quotes" style="display:none;">
+          <div class="admin-page-header">
+            <div>
+              <div class="admin-page-title">Devis</div>
+              <div class="admin-page-sub">Demandes de devis Pro</div>
+            </div>
+            <button class="admin-topbar-btn"><i class="ti ti-download"></i> Export</button>
+          </div>
+          <div class="card-section">
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>N° Devis</th>
+                    <th>Client</th>
+                    <th>Entreprise</th>
+                    <th>Date</th>
+                    <th>Statut</th>
+                    <th>Réponse</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="quotesBody">
+                  <tr>
+                    <td colspan="7" style="text-align:center;padding:24px;color:#607D8B;">Chargement...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SETTINGS SECTION ───────────────────────── -->
+        <div id="section-settings" style="display:none;">
+          <div class="admin-page-header">
+            <div>
+              <div class="admin-page-title">Paramètres</div>
+              <div class="admin-page-sub">Configuration du site</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="card-section">
+              <div class="card-section-title"><i class="ti ti-building" style="color:var(--blue,#1565C0);"></i>
+                Informations entreprise</div>
+              <div class="admin-form-group"><label class="admin-form-label">Nom de l'entreprise</label><input
+                  class="admin-form-input" value="SONECOMX PRO SARL"></div>
+              <div class="admin-form-group"><label class="admin-form-label">Téléphone principal</label><input
+                  class="admin-form-input" value="+237 699 000 000"></div>
+              <div class="admin-form-group"><label class="admin-form-label">Email contact</label><input
+                  class="admin-form-input" value="contact@sonecomxpro.cm"></div>
+              <div class="admin-form-group"><label class="admin-form-label">Adresse</label><input
+                  class="admin-form-input" value="Yaoundé, Cameroun"></div>
+              <button class="admin-topbar-btn primary"><i class="ti ti-check"></i> Enregistrer</button>
+            </div>
+            <div class="card-section">
+              <div class="card-section-title"><i class="ti ti-truck" style="color:var(--blue,#1565C0);"></i> Livraison
+              </div>
+              <div class="admin-form-group"><label class="admin-form-label">Livraison gratuite à partir de (F
+                  CFA)</label><input class="admin-form-input" type="number" value="50000"></div>
+              <div class="admin-form-group"><label class="admin-form-label">Frais de livraison standard (F
+                  CFA)</label><input class="admin-form-input" type="number" value="2500"></div>
+              <div class="admin-form-group"><label class="admin-form-label">Délai livraison grandes villes
+                  (h)</label><input class="admin-form-input" type="number" value="24"></div>
+              <div class="admin-form-group"><label class="admin-form-label">Délai livraison provinces (h)</label><input
+                  class="admin-form-input" type="number" value="72"></div>
+              <button class="admin-topbar-btn primary"><i class="ti ti-check"></i> Enregistrer</button>
+            </div>
+            <div class="card-section">
+              <div class="card-section-title"><i class="ti ti-credit-card" style="color:var(--blue,#1565C0);"></i>
+                Paiements</div>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <!-- Orange Money -->
+                <div
+                  style="display:flex;align-items:center;justify-content:space-between;padding:10px;border:1px solid #E0E6EE;border-radius:8px;">
+                  <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;"><i
+                      class="ti ti-device-mobile" style="color:#1565C0;font-size:16px;"></i>Orange Money</div>
+                  <label style="position:relative;display:inline-block;width:36px;height:20px;cursor:pointer;">
+                    <input type="checkbox" class="admin-switch-input" checked style="opacity:0;width:0;height:0;">
+                    <span class="admin-switch-track"></span>
+                    <span class="admin-switch-thumb"></span>
+                  </label>
+                </div>
+                <!-- MTN MoMo -->
+                <div
+                  style="display:flex;align-items:center;justify-content:space-between;padding:10px;border:1px solid #E0E6EE;border-radius:8px;">
+                  <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;"><i
+                      class="ti ti-device-mobile-star" style="color:#1565C0;font-size:16px;"></i>MTN MoMo</div>
+                  <label style="position:relative;display:inline-block;width:36px;height:20px;cursor:pointer;">
+                    <input type="checkbox" class="admin-switch-input" checked style="opacity:0;width:0;height:0;">
+                    <span class="admin-switch-track"></span>
+                    <span class="admin-switch-thumb"></span>
+                  </label>
+                </div>
+                <!-- Carte bancaire -->
+                <div
+                  style="display:flex;align-items:center;justify-content:space-between;padding:10px;border:1px solid #E0E6EE;border-radius:8px;">
+                  <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;"><i
+                      class="ti ti-credit-card" style="color:#1565C0;font-size:16px;"></i>Carte bancaire</div>
+                  <label style="position:relative;display:inline-block;width:36px;height:20px;cursor:pointer;">
+                    <input type="checkbox" class="admin-switch-input" checked style="opacity:0;width:0;height:0;">
+                    <span class="admin-switch-track"></span>
+                    <span class="admin-switch-thumb"></span>
+                  </label>
+                </div>
+                <!-- Virement -->
+                <div
+                  style="display:flex;align-items:center;justify-content:space-between;padding:10px;border:1px solid #E0E6EE;border-radius:8px;">
+                  <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;"><i
+                      class="ti ti-building-bank" style="color:#1565C0;font-size:16px;"></i>Virement</div>
+                  <label style="position:relative;display:inline-block;width:36px;height:20px;cursor:pointer;">
+                    <input type="checkbox" class="admin-switch-input" checked style="opacity:0;width:0;height:0;">
+                    <span class="admin-switch-track"></span>
+                    <span class="admin-switch-thumb"></span>
+                  </label>
+                </div>
+                <!-- À la livraison -->
+                <div
+                  style="display:flex;align-items:center;justify-content:space-between;padding:10px;border:1px solid #E0E6EE;border-radius:8px;">
+                  <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;"><i
+                      class="ti ti-cash" style="color:#1565C0;font-size:16px;"></i>À la livraison</div>
+                  <label style="position:relative;display:inline-block;width:36px;height:20px;cursor:pointer;">
+                    <input type="checkbox" class="admin-switch-input" style="opacity:0;width:0;height:0;">
+                    <span class="admin-switch-track"></span>
+                    <span class="admin-switch-thumb"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="card-section">
+              <div class="card-section-title"><i class="ti ti-shield-check" style="color:var(--blue,#1565C0);"></i>
+                Sécurité</div>
+              <div class="admin-form-group"><label class="admin-form-label">Tentatives de connexion max</label><input
+                  class="admin-form-input" type="number" value="5"></div>
+              <div class="admin-form-group"><label class="admin-form-label">Durée session (jours)</label><input
+                  class="admin-form-input" type="number" value="7"></div>
+              <div class="admin-form-group"><label class="admin-form-label">Rate limit (req/15min)</label><input
+                  class="admin-form-input" type="number" value="200"></div>
+              <button class="admin-topbar-btn primary"><i class="ti ti-check"></i> Enregistrer</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Other sections placeholder -->
+        <div id="section-analytics" style="display:none;">
+          <div class="admin-page-header">
+            <div class="admin-page-title">Analytiques</div>
+          </div>
+          <div class="card-section">
+            <p style="color:#607D8B;font-size:13px;padding:20px;text-align:center;"><i class="ti ti-chart-bar"
+                style="font-size:48px;display:block;margin-bottom:12px;opacity:0.3;"></i>Module analytiques avancées — à
+              connecter à Google Analytics ou Matomo</p>
+          </div>
+        </div>
+        <div id="section-traffic" style="display:none;">
+          <div class="admin-page-header">
+            <div class="admin-page-title">Trafic Live</div>
+          </div>
+          <div class="card-section">
+            <div style="background:#0D1B2A;border-radius:12px;padding:24px;text-align:center;color:#fff;"><i
+                class="ti ti-chart-line" style="font-size:48px;display:block;margin-bottom:12px;color:#64B5F6;"></i>
+              <p style="font-size:14px;">Module trafic temps réel<br><span
+                  style="color:rgba(255,255,255,0.5);font-size:12px;">Connecter à un service de suivi (Plausible,
+                  Matomo, Google Analytics)</span></p>
+            </div>
+          </div>
+        </div>
+        <div id="section-categories" style="display:none;">
+          <div class="admin-page-header">
+            <div class="admin-page-title">Catégories</div>
+          </div>
+          <div class="card-section">
+            <p style="color:#607D8B;font-size:13px;">16 catégories actives — gestion CRUD via API</p>
+          </div>
+        </div>
+        <div id="section-promos" style="display:none;">
+          <div class="admin-page-header">
+            <div class="admin-page-title">Promotions</div>
+          </div>
+          <div class="card-section">
+            <p style="color:#607D8B;font-size:13px;">Gestion des promotions et codes promo</p>
+          </div>
+        </div>
+        <div id="section-invoices" style="display:none;">
+          <div class="admin-page-header">
+            <div class="admin-page-title">Factures</div>
+          </div>
+          <div class="card-section">
+            <p style="color:#607D8B;font-size:13px;">Génération et gestion des factures</p>
+          </div>
+        </div>
+        <div id="section-pro-accounts" style="display:none;">
+          <div class="admin-page-header">
+            <div class="admin-page-title">Comptes Pro</div>
+          </div>
+          <div class="card-section">
+            <p style="color:#607D8B;font-size:13px;">Gestion des comptes entreprise et artisans</p>
+          </div>
+        </div>
+        <div id="section-messages" style="display:none;">
+          <div class="admin-page-header">
+            <div class="admin-page-title">Messages</div>
+          </div>
+          <div class="card-section">
+            <p style="color:#607D8B;font-size:13px;">Messagerie client — 3 messages non lus</p>
+          </div>
+        </div>
+        <div id="section-delivery" style="display:none;">
+          <div class="admin-page-header">
+            <div class="admin-page-title">Livraisons</div>
+          </div>
+          <div class="card-section">
+            <p style="color:#607D8B;font-size:13px;">Suivi et gestion des livraisons en cours</p>
+          </div>
+        </div>
+        <div id="section-logs" style="display:none;">
+          <div class="admin-page-header">
+            <div class="admin-page-title">Logs système</div>
+          </div>
+          <div class="card-section">
+            <p style="color:#607D8B;font-size:13px;">Journaux d'activité et d'erreurs du serveur</p>
+          </div>
+        </div>
+
+      </div><!-- /admin-content -->
+    </div><!-- /admin-main -->
+  </div><!-- /admin-wrap -->
+
+  <!-- Product Modal -->
+  <div class="admin-modal-overlay" id="productModal">
+    <div class="admin-modal">
+      <div class="admin-modal-title" id="productModalTitle">Nouveau produit</div>
+      <button class="admin-modal-close" onclick="closeModal('productModal')"><i class="ti ti-x"></i></button>
+      <div class="admin-form-row">
+        <div class="admin-form-group"><label class="admin-form-label">Nom du produit *</label><input
+            class="admin-form-input" id="pName" placeholder="Nom complet du produit"></div>
+        <div class="admin-form-group"><label class="admin-form-label">Marque *</label><input class="admin-form-input"
+            id="pBrand" placeholder="Bosch, Makita..."></div>
+      </div>
+      <div class="admin-form-group"><label class="admin-form-label">Description *</label><textarea
+          class="admin-form-input" id="pDesc" rows="3" placeholder="Description détaillée..."></textarea></div>
+      <div class="admin-form-group"><label class="admin-form-label">Description courte <span style="color:#90A4AE;font-size:10px;">(max 200 car.)</span></label><input
+          class="admin-form-input" id="pShortDesc" type="text" maxlength="200" placeholder="Résumé court affiché dans les cartes produit..."></div>
+      <div class="admin-form-row">
+        <div class="admin-form-group"><label class="admin-form-label">Catégorie *</label>
+          <select class="admin-form-input" id="pCategory">
+            <option value="">Choisir...</option>
+            <option>Boulonnerie & Sécurité</option>
+            <option>Électroménager</option>
+            <option>Équipement industriel</option>
+            <option>Échelle & Escabeau</option>
+            <option>Matériel agricole</option>
+            <option>Lavage & Manutention</option>
+            <option>Parc métallique</option>
+            <option>Matériel chantier</option>
+            <option>Plomberie industrielle</option>
+            <option>Pneu & Huile</option>
+            <option>Sanitaire & Carreaux</option>
+            <option>Électricité</option>
+            <option>Consommable & Logistique</option>
+            <option>Portatif & Accessoires</option>
+            <option>Peinture & Étanchéité</option>
+            <option>EPI & Signalisation</option>
+          </select>
+        </div>
+        <div class="admin-form-group"><label class="admin-form-label">SKU</label><input class="admin-form-input"
+            id="pSku" placeholder="Auto-généré si vide"></div>
+      </div>
+      <div class="admin-form-row">
+        <div class="admin-form-group"><label class="admin-form-label">Prix (F CFA) *</label><input
+            class="admin-form-input" type="number" id="pPrice" placeholder="0"></div>
+        <div class="admin-form-group"><label class="admin-form-label">Remise (%)</label><input class="admin-form-input"
+            type="number" id="pDiscount" placeholder="0" min="0" max="100"></div>
+      </div>
+      <div class="admin-form-row">
+        <div class="admin-form-group"><label class="admin-form-label">Stock *</label><input class="admin-form-input"
+            type="number" id="pStock" placeholder="0"></div>
+        <div class="admin-form-group"><label class="admin-form-label">Unité</label><input class="admin-form-input"
+            id="pUnit" placeholder="unité, paire, lot..."></div>
+      </div>
+      <div class="admin-form-group">
+        <label class="admin-form-label">Images (Uploads)</label>
+        <input class="admin-form-input" type="file" id="pImages" accept="image/*" multiple
+          style="padding: 8px; cursor: pointer;">
+      </div>
+      <div style="display:flex;gap:16px;margin-bottom:16px;">
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="checkbox"
+            id="pFeatured"> Produit vedette</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="checkbox"
+            id="pIsNew" checked> Nouveau produit</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="checkbox"
+            id="pProOnly"> Pro uniquement</label>
+      </div>
+      <button class="admin-topbar-btn primary" style="width:100%;justify-content:center;padding:11px;"
+        onclick="saveProduct()">
+        <i class="ti ti-check"></i> Enregistrer le produit
+      </button>
+    </div>
+  </div>
+
+  <!-- Order Status Modal -->
+  <div class="admin-modal-overlay" id="orderModal">
+    <div class="admin-modal">
+      <div class="admin-modal-title">Mettre à jour la commande</div>
+      <button class="admin-modal-close" onclick="closeModal('orderModal')"><i class="ti ti-x"></i></button>
+      <input type="hidden" id="editOrderId">
+      <div class="admin-form-group"><label class="admin-form-label">Nouveau statut</label>
+        <select class="admin-form-input" id="newOrderStatus">
+          <option value="pending">En attente</option>
+          <option value="confirmed">Confirmée</option>
+          <option value="processing">En préparation</option>
+          <option value="shipped">Expédiée</option>
+          <option value="delivered">Livrée</option>
+          <option value="cancelled">Annulée</option>
+          <option value="refunded">Remboursée</option>
+        </select>
+      </div>
+      <div class="admin-form-group"><label class="admin-form-label">Numéro de suivi</label><input
+          class="admin-form-input" id="trackingNum" placeholder="Ex: DHL-12345678"></div>
+      <div class="admin-form-group"><label class="admin-form-label">Commentaire</label><textarea
+          class="admin-form-input" id="orderComment" rows="3" placeholder="Informations supplémentaires..."></textarea>
+      </div>
+      <button class="admin-topbar-btn primary" style="width:100%;justify-content:center;padding:11px;"
+        onclick="updateOrderStatus()">
+        <i class="ti ti-check"></i> Mettre à jour
+      </button>
+    </div>
+  </div>
+
+  <style>
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .admin-spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #E0E6EE;
+      border-top-color: #1565C0;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Styles pour les interrupteurs (toggles) */
+    .admin-switch-track {
+      position: absolute;
+      inset: 0;
+      background: #E0E6EE;
+      border-radius: 20px;
+      transition: 0.3s;
+    }
+    .admin-switch-thumb {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+    .admin-switch-input:checked ~ .admin-switch-track {
+      background: #1565C0;
+    }
+    .admin-switch-input:checked ~ .admin-switch-thumb {
+      left: 19px;
+    }
+  </style>
+
+  <script>
+    // Token lu dynamiquement à chaque requête (pas statique au chargement)
+    function getToken() { return localStorage.getItem('snx_token'); }
+    const API = '/api';
+
+    async function apiFetch(method, url, data) {
+      const ADMIN_TOKEN = getToken();
+      if (!ADMIN_TOKEN) { window.location.href = '/#auth'; return { success: false, message: 'Non connecté' }; }
+      const opts = { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ADMIN_TOKEN}` } };
+      if (data) opts.body = JSON.stringify(data);
+      const r = await fetch(API + url, opts);
+      return r.json();
+    }
+
+    function fmt(n) { return new Intl.NumberFormat('fr-FR').format(Math.round(n || 0)) + ' F'; }
+    function formatDate(d) { return new Date(d).toLocaleDateString('fr-FR'); }
+    function statusBadge(s) {
+      const map = { delivered: 'success', confirmed: 'info', processing: 'info', shipped: 'info', pending: 'pending', cancelled: 'danger', refunded: 'neutral', accepted: 'success', rejected: 'danger', sent: 'info', expired: 'neutral' };
+      const labels = { delivered: 'Livré', confirmed: 'Confirmée', processing: 'Préparation', shipped: 'Expédiée', pending: 'En attente', cancelled: 'Annulée', refunded: 'Remboursée', accepted: 'Accepté', rejected: 'Rejeté', sent: 'Envoyé', expired: 'Expiré' };
+      return `<span class="admin-badge ${map[s] || 'neutral'}">${labels[s] || s}</span>`;
+    }
+
+    function showSection(name) {
+      document.querySelectorAll('[id^="section-"]').forEach(el => el.style.display = 'none');
+      const el = document.getElementById(`section-${name}`);
+      if (el) el.style.display = 'block';
+      document.querySelectorAll('.admin-nav-item').forEach(item => item.classList.remove('active'));
+      const labels = { dashboard: 'Tableau de bord', analytics: 'Analytiques', traffic: 'Trafic Live', orders: 'Commandes', products: 'Produits', categories: 'Catégories', promos: 'Promotions', invoices: 'Factures', users: 'Utilisateurs', 'pro-accounts': 'Comptes Pro', messages: 'Messages', quotes: 'Devis', delivery: 'Livraisons', settings: 'Paramètres', logs: 'Logs' };
+      document.getElementById('pageTitle').textContent = labels[name] || name;
+      event?.target?.closest('.admin-nav-item')?.classList.add('active');
+      if (name === 'products') loadProducts();
+      if (name === 'orders') loadOrders();
+      if (name === 'users') loadUsers();
+      if (name === 'quotes') loadQuotes();
+    }
+
+    function setPeriod(btn, period) {
+      document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    function openProductModal() { openModal('productModal'); }
+    function logout() { localStorage.removeItem('snx_token'); window.location.href = '/'; }
+
+    function exportData() { alert('Export CSV en cours de génération...'); }
+    function exportOrders() { alert('Export des commandes en cours...'); }
+    function refreshData() { location.reload(); }
+
+    /* ── Load Dashboard Data ─────────────────────────────────── */
+    async function loadDashboard() {
+      const now = new Date();
+      document.getElementById('dashDate').textContent = `Vue d'ensemble — ${now.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}`;
+
+      const [statsRes, actRes] = await Promise.all([
+        apiFetch('GET', '/dashboard/stats'),
+        apiFetch('GET', '/dashboard/activity')
+      ]);
+
+      if (statsRes.success) {
+        const k = statsRes.data.kpis;
+        document.getElementById('kpiOrders').textContent = (k.totalOrders || 0).toLocaleString('fr-FR');
+        document.getElementById('kpiOrdersTrend').innerHTML = `<i class="ti ti-trending-up"></i> +${k.monthOrders || 0} ce mois`;
+        document.getElementById('kpiRevenue').textContent = k.monthRevenue ? fmt(k.monthRevenue) : '—';
+        document.getElementById('kpiRevenueTrend').innerHTML = `<i class="ti ti-trending-up"></i> vs ${k.prevRevenue ? fmt(k.prevRevenue) : '—'}`;
+        document.getElementById('lowStockBadge').textContent = k.lowStock || 0;
+        if (k.totalUsers) document.getElementById('usersCount') && (document.getElementById('usersCount').textContent = `${k.totalUsers} utilisateurs inscrits`);
+      }
+
+      if (actRes.success) {
+        renderRecentOrders(actRes.data.recentOrders || []);
+        renderActivityFeed(actRes.data.recentOrders || [], actRes.data.recentUsers || [], actRes.data.recentQuotes || []);
+      }
+
+      renderCategoryBars();
+      renderLowStock();
+      renderPendingQuotes();
+    }
+
+    function renderRecentOrders(orders) {
+      const tbody = document.getElementById('recentOrdersBody');
+      if (!orders.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#607D8B;">Aucune commande récente</td></tr>'; return; }
+      tbody.innerHTML = orders.map(o => `
+    <tr>
+      <td style="font-weight:600;color:#1565C0;font-size:12px;">${o.orderNumber}</td>
+      <td style="font-size:12px;">${o.user?.firstName || ''} ${o.user?.lastName || ''}</td>
+      <td style="font-weight:600;font-size:12px;">${fmt(o.totalPrice)}</td>
+      <td>${statusBadge(o.status)}</td>
+      <td><button class="admin-action-btn" onclick="openEditOrder('${o._id}','${o.status}')"><i class="ti ti-edit"></i></button></td>
+    </tr>`).join('');
+    }
+
+    function renderActivityFeed(orders, users, quotes) {
+      const feed = document.getElementById('activityFeed');
+      const items = [];
+      orders.slice(0, 2).forEach(o => items.push({ icon: 'ti-shopping-cart', color: 'blue', text: `Commande <strong>${o.orderNumber}</strong> — ${fmt(o.totalPrice)}`, time: formatDate(o.createdAt) }));
+      users.slice(0, 2).forEach(u => items.push({ icon: 'ti-user-plus', color: 'green', text: `Nouvel utilisateur: <strong>${u.firstName} ${u.lastName}</strong>`, time: formatDate(u.createdAt) }));
+      quotes.slice(0, 2).forEach(q => items.push({ icon: 'ti-file-invoice', color: 'amber', text: `Devis demandé: <strong>${q.quoteNumber}</strong>`, time: formatDate(q.createdAt) }));
+      if (!items.length) { feed.innerHTML = '<div style="text-align:center;padding:16px;color:#607D8B;font-size:12px;">Aucune activité récente</div>'; return; }
+      feed.innerHTML = items.map(item => `
+    <div class="activity-item">
+      <div class="activity-icon ${item.color}"><i class="ti ${item.icon}"></i></div>
+      <div><div class="activity-text">${item.text}</div><div class="activity-time">${item.time}</div></div>
+    </div>`).join('');
+    }
+
+    function renderCategoryBars() {
+      const cats = [
+        { name: 'Outillage électrique', pct: 72, val: '24%', color: '#1565C0' },
+        { name: 'Boulonnerie & Sécurité', pct: 54, val: '18%', color: '#1976D2' },
+        { name: 'Matériel chantier', pct: 48, val: '16%', color: '#42A5F5' },
+        { name: 'Électricité', pct: 39, val: '13%', color: '#E65100' },
+        { name: 'EPI & Signalisation', pct: 33, val: '11%', color: '#EF6C00' },
+        { name: 'Plomberie industrielle', pct: 27, val: '9%', color: '#90A4AE' },
+      ];
+      document.getElementById('topCategoriesBars').innerHTML = cats.map(c => `
+    <div class="progress-bar-row">
+      <div class="progress-bar-label"><span>${c.name}</span><span style="color:${c.color};">${c.val}</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width:${c.pct}%;background:${c.color};"></div></div>
+    </div>`).join('');
+    }
+
+    function renderLowStock() {
+      const products = [
+        { name: 'Perceuse Makita 18V', stock: 3, icon: '🔩' },
+        { name: 'Niveau laser Stabila', stock: 2, icon: '📐' },
+        { name: 'Coffret Facom 94 pcs', stock: 1, icon: '🪛' },
+        { name: 'Robinet Grohe thermostat.', stock: 4, icon: '🚿' },
+      ];
+      document.getElementById('lowStockList').innerHTML = products.map(p => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F0F2F5;font-size:12px;">
+      <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:16px;">${p.icon}</span><span style="font-weight:500;">${p.name}</span></div>
+      <span class="admin-badge ${p.stock <= 2 ? 'danger' : 'pending'}">${p.stock} restant${p.stock > 1 ? 's' : ''}</span>
+    </div>`).join('');
+    }
+
+    function renderPendingQuotes() {
+      const quotes = [
+        { num: 'DEV-847321', company: 'Bâtipro SARL', items: 12 },
+        { num: 'DEV-847319', company: 'Jean Mballa', items: 3 },
+        { num: 'DEV-847315', company: 'SOCAPLAN Group', items: 45 },
+      ];
+      document.getElementById('pendingQuotesList').innerHTML = quotes.map(q => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F0F2F5;font-size:12px;">
+      <div><div style="font-weight:600;color:#1565C0;">${q.num}</div><div style="color:#607D8B;">${q.company} — ${q.items} articles</div></div>
+      <button class="admin-action-btn" style="font-size:11px;">Répondre</button>
+    </div>`).join('');
+    }
+
+    /* ── Load Products ───────────────────────────────────────── */
+    async function loadProducts() {
+      const res = await apiFetch('GET', '/products?limit=50');
+      const tbody = document.getElementById('productsBody');
+      const cnt = document.getElementById('productsCount');
+      if (!res.success || !res.data.length) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:#607D8B;">Aucun produit</td></tr>';
+        return;
+      }
+      cnt && (cnt.textContent = `${res.total || res.data.length} produits`);
+      const brandLogos = {
+        'ingco': '/images/brands/ingco.jpg',
+        'schneider electric': '/images/brands/schneider.jpg',
+        'schneider': '/images/brands/schneider.jpg',
+        'bosch': '/images/brands/bosch.jpg',
+        'legrand': '/images/brands/legrand.jpg',
+        'huawei': '/images/brands/huawei.jpg',
+        'coverguard': '/images/brands/coverguard.jpg',
+        'dewalt': '/images/brands/dewalt.jpg',
+        'kärcher': '/images/brands/kärcher.jpg',
+        'karcher': '/images/brands/kärcher.jpg',
+        'leica': '/images/brands/leica.jpg',
+        'stanley': '/images/brands/stanley.jpg'
+      };
+      const icons = { Makita: '🔩', Stanley: '🔧', Fischer: '🔩', Uvex: '🪖', Stabila: '📐', Sikkens: '🎨', Vachette: '🔐', Grohe: '🚿', Facom: '🪛', Petzl: '🔦' };
+      tbody.innerHTML = res.data.map(p => {
+        let brandKey = p.brand ? p.brand.trim().toLowerCase() : '';
+        let brandDisplay = icons[p.brand] || '🔧';
+        if (brandLogos[brandKey]) {
+          brandDisplay = `<img src="${brandLogos[brandKey]}" style="width:100%;height:100%;object-fit:contain;border-radius:4px;" alt="${p.brand}">`;
+        }
+        return `
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:8px;">
+        <div class="product-thumb-admin" style="padding:0;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;">${brandDisplay}</div>
+        <div><div style="font-weight:600;font-size:12px;">${p.name}</div><div style="font-size:10px;color:#607D8B;">${p.brand}</div></div>
+      </div></td>
+      <td style="font-size:11px;color:#607D8B;">${p.sku || '—'}</td>
+      <td style="font-size:11px;">${p.category?.name || '—'}</td>
+      <td style="font-weight:600;font-size:12px;">${fmt(p.price)}</td>
+      <td><span class="admin-badge ${p.stock > 10 ? 'success' : p.stock > 0 ? 'pending' : 'danger'}">${p.stock}</span></td>
+      <td style="font-size:12px;">${p.sold || 0}</td>
+      <td style="color:#FFCA28;font-size:12px;">${'★'.repeat(Math.round(p.rating || 0))} <span style="color:#607D8B;">(${p.numReviews || 0})</span></td>
+      <td>${p.isActive ? '<span class="admin-badge success">Actif</span>' : '<span class="admin-badge neutral">Archivé</span>'}</td>
+      <td>
+        <button class="admin-action-btn" onclick="editProduct('${p._id}')"><i class="ti ti-edit"></i></button>
+        <button class="admin-action-btn danger" onclick="deleteProduct('${p._id}')"><i class="ti ti-trash"></i></button>
+      </td>
+    </tr>`;
+      }).join('');
+      window._allProducts = res.data;
+    }
+
+    function filterProducts() {
+      const search = document.getElementById('productSearch')?.value.toLowerCase() || '';
+      const cat = document.getElementById('productCatFilter')?.value || '';
+      if (!window._allProducts) return;
+      const filtered = window._allProducts.filter(p => {
+        const matchSearch = !search || p.name.toLowerCase().includes(search) || p.brand.toLowerCase().includes(search);
+        const matchCat = !cat || (p.category?._id || p.category || '').toString() === cat;
+        return matchSearch && matchCat;
+      });
+      const brandLogos = {
+        'ingco': '/images/brands/ingco.jpg',
+        'schneider electric': '/images/brands/schneider.jpg',
+        'schneider': '/images/brands/schneider.jpg',
+        'bosch': '/images/brands/bosch.jpg',
+        'legrand': '/images/brands/legrand.jpg',
+        'huawei': '/images/brands/huawei.jpg',
+        'coverguard': '/images/brands/coverguard.jpg',
+        'dewalt': '/images/brands/dewalt.jpg',
+        'kärcher': '/images/brands/kärcher.jpg',
+        'karcher': '/images/brands/kärcher.jpg',
+        'leica': '/images/brands/leica.jpg',
+        'stanley': '/images/brands/stanley.jpg'
+      };
+      const icons = { Makita: '🔩', Stanley: '🔧', Fischer: '🔩', Uvex: '🪖', Stabila: '📐', Sikkens: '🎨', Vachette: '🔐', Grohe: '🚿', Facom: '🪛', Petzl: '🔦' };
+      const tbody = document.getElementById('productsBody');
+      tbody.innerHTML = filtered.length ? filtered.map(p => {
+        let brandKey = p.brand ? p.brand.trim().toLowerCase() : '';
+        let brandDisplay = icons[p.brand] || '🔧';
+        if (brandLogos[brandKey]) {
+          brandDisplay = `<img src="${brandLogos[brandKey]}" style="width:100%;height:100%;object-fit:contain;border-radius:4px;" alt="${p.brand}">`;
+        }
+        return `
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:8px;">
+        <div class="product-thumb-admin" style="padding:0;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;">${brandDisplay}</div>
+        <div><div style="font-weight:600;font-size:12px;">${p.name}</div><div style="font-size:10px;color:#607D8B;">${p.brand}</div></div>
+      </div></td>
+      <td style="font-size:11px;color:#607D8B;">${p.sku || '—'}</td>
+      <td style="font-size:11px;">${p.category?.name || '—'}</td>
+      <td style="font-weight:600;font-size:12px;">${fmt(p.price)}</td>
+      <td><span class="admin-badge ${p.stock > 10 ? 'success' : p.stock > 0 ? 'pending' : 'danger'}">${p.stock}</span></td>
+      <td style="font-size:12px;">${p.sold || 0}</td>
+      <td style="color:#FFCA28;font-size:12px;">${'★'.repeat(Math.round(p.rating || 0))} <span style="color:#607D8B;">(${p.numReviews || 0})</span></td>
+      <td>${p.isActive ? '<span class="admin-badge success">Actif</span>' : '<span class="admin-badge neutral">Archivé</span>'}</td>
+      <td><button class="admin-action-btn" onclick="editProduct('${p._id}')"><i class="ti ti-edit"></i></button><button class="admin-action-btn danger" onclick="deleteProduct('${p._id}')"><i class="ti ti-trash"></i></button></td>
+    </tr>`;
+      }).join('') : '<tr><td colspan="9" style="text-align:center;padding:20px;color:#607D8B;">Aucun résultat</td></tr>';
+    }
+
+    // ID du produit en cours d'édition (null = création)
+    let _editingProductId = null;
+    let _editingProductImages = [];
+    let _editingProductThumbnail = '';
+
+    function openProductModal(resetId) {
+      _editingProductId = null;
+      _editingProductImages = [];
+      _editingProductThumbnail = '';
+      document.getElementById('productModalTitle').textContent = 'Nouveau produit';
+      // Reset du formulaire
+      ['pName','pBrand','pDesc','pShortDesc','pPrice','pDiscount','pStock','pUnit','pSku'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = '';
+      });
+      ['pFeatured','pIsNew','pProOnly'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.checked = false;
+      });
+      const cat = document.getElementById('pCategory'); if (cat) cat.value = '';
+      const fileInput = document.getElementById('pImages'); if (fileInput) fileInput.value = '';
+      openModal('productModal');
+    }
+
+    async function saveProduct() {
+      const fileInput = document.getElementById('pImages');
+      const files = fileInput ? fileInput.files : [];
+      let uploadedImageUrls = [];
+
+      if (files && files.length > 0) {
+        const formData = new FormData();
+        for (let i = 0; i < files.length; i++) {
+          formData.append('images', files[i]);
+        }
+
+        const token = getToken();
+        if (!token) { window.location.href = '/#auth'; return; }
+
+        try {
+          const uploadRes = await fetch(API + '/upload', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            body: formData
+          });
+
+          const uploadJson = await uploadRes.json();
+          if (!uploadJson.success) {
+            alert('Erreur lors du téléchargement de l\'image : ' + (uploadJson.message || 'Erreur inconnue'));
+            return;
+          }
+          uploadedImageUrls = uploadJson.data;
+        } catch (error) {
+          console.error('Erreur upload:', error);
+          alert('Erreur réseau lors du téléchargement des images');
+          return;
+        }
+      }
+
+      const data = {
+        name:        document.getElementById('pName').value.trim(),
+        brand:       document.getElementById('pBrand').value.trim(),
+        description: document.getElementById('pDesc').value.trim(),
+        shortDesc:   (document.getElementById('pShortDesc')?.value || '').trim(),
+        sku:         (document.getElementById('pSku')?.value || '').trim() || undefined,
+        category:    document.getElementById('pCategory').value,
+        price:       parseFloat(document.getElementById('pPrice').value) || 0,
+        discount:    parseFloat(document.getElementById('pDiscount').value) || 0,
+        stock:       parseInt(document.getElementById('pStock').value) || 0,
+        unit:        document.getElementById('pUnit').value || 'unité',
+        isFeatured:  document.getElementById('pFeatured').checked,
+        isNew:       document.getElementById('pIsNew').checked,
+        isProOnly:   document.getElementById('pProOnly').checked,
+      };
+
+      if (uploadedImageUrls.length > 0) {
+        data.images = uploadedImageUrls;
+        data.thumbnail = uploadedImageUrls[0];
+      } else if (_editingProductId) {
+        data.images = _editingProductImages;
+        data.thumbnail = _editingProductThumbnail;
+      }
+
+      if (!data.name || !data.brand || !data.category || !data.description || !data.price) {
+        alert('Remplissez les champs obligatoires (nom, marque, description, catégorie, prix)');
+        return;
+      }
+
+      let res;
+      if (_editingProductId) {
+        res = await apiFetch('PUT', `/products/${_editingProductId}`, data);
+        if (res.success) { closeModal('productModal'); alert(`Produit "${data.name}" mis à jour !`); loadProducts(); }
+        else alert(res.message || 'Erreur lors de la mise à jour');
+      } else {
+        res = await apiFetch('POST', '/products', data);
+        if (res.success) { closeModal('productModal'); alert(`Produit "${data.name}" créé !`); loadProducts(); }
+        else alert(res.message || 'Erreur lors de la création');
+      }
+    }
+
+    async function editProduct(id) {
+      _editingProductId = id;
+      document.getElementById('productModalTitle').textContent = 'Modifier le produit';
+      const fileInput = document.getElementById('pImages'); if (fileInput) fileInput.value = '';
+      openModal('productModal');
+
+      // Pré-remplir le formulaire avec les données existantes
+      const res = await apiFetch('GET', `/products/${id}`);
+      if (!res.success) { alert('Impossible de charger le produit'); return; }
+      const p = res.data;
+      _editingProductImages = p.images || [];
+      _editingProductThumbnail = p.thumbnail || '';
+      
+      const set = (elId, val) => { const el = document.getElementById(elId); if (el) el.value = val ?? ''; };
+      set('pName', p.name);
+      set('pBrand', p.brand);
+      set('pSku', p.sku);
+      set('pDesc', p.description);
+      set('pShortDesc', p.shortDesc);
+      set('pPrice', p.priceOld > 0 ? p.priceOld : p.price); // afficher le prix original
+      set('pDiscount', p.discount);
+      set('pStock', p.stock);
+      set('pUnit', p.unit);
+      set('pCategory', p.category?._id || p.category);
+      const chk = (elId, val) => { const el = document.getElementById(elId); if (el) el.checked = !!val; };
+      chk('pFeatured', p.isFeatured);
+      chk('pIsNew', p.isNew);
+      chk('pProOnly', p.isProOnly);
+    }
+    async function deleteProduct(id) {
+      if (!confirm('Archiver ce produit ?')) return;
+      const res = await apiFetch('DELETE', `/products/${id}`);
+      if (res.success) { alert('Produit archivé'); loadProducts(); }
+    }
+
+    /* ── Load Orders ─────────────────────────────────────────── */
+    async function loadOrders() {
+      const status = document.getElementById('orderStatusFilter')?.value || '';
+      const res = await apiFetch('GET', `/orders?limit=30${status ? '&status=' + status : ''}`);
+      const tbody = document.getElementById('ordersBody');
+      const cnt = document.getElementById('ordersCount');
+      if (!res.success || !res.data.length) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:#607D8B;">Aucune commande</td></tr>';
+        return;
+      }
+      cnt && (cnt.textContent = `${res.total || res.data.length} commandes`);
+      const pmLabels = { orange_money: 'Orange Money', mtn_momo: 'MTN MoMo', card: 'Carte', wire: 'Virement', cod: 'Livraison' };
+      tbody.innerHTML = res.data.map(o => `
+    <tr>
+      <td style="font-weight:600;color:#1565C0;font-size:12px;">${o.orderNumber}</td>
+      <td style="font-size:12px;">${o.user?.firstName || ''} ${o.user?.lastName || ''}<br><span style="color:#607D8B;font-size:10px;">${o.user?.email || ''}</span></td>
+      <td style="font-size:12px;">${formatDate(o.createdAt)}</td>
+      <td style="font-weight:700;font-size:13px;">${fmt(o.totalPrice)}</td>
+      <td style="font-size:11px;color:#607D8B;">${pmLabels[o.paymentMethod] || o.paymentMethod}</td>
+      <td>${statusBadge(o.status)}</td>
+      <td style="white-space:nowrap;">
+        <button class="admin-action-btn" onclick="openEditOrder('${o._id}','${o.status}')"><i class="ti ti-edit"></i> Statut</button>
+      </td>
+    </tr>`).join('');
+    }
+
+    function openEditOrder(id, status) {
+      document.getElementById('editOrderId').value = id;
+      document.getElementById('newOrderStatus').value = status;
+      openModal('orderModal');
+    }
+
+    async function updateOrderStatus() {
+      const id = document.getElementById('editOrderId').value;
+      const status = document.getElementById('newOrderStatus').value;
+      const trackingNumber = document.getElementById('trackingNum').value;
+      const comment = document.getElementById('orderComment').value;
+      const res = await apiFetch('PUT', `/orders/${id}/status`, { status, trackingNumber, comment });
+      if (res.success) { closeModal('orderModal'); alert('Statut mis à jour !'); loadOrders(); }
+      else alert(res.message || 'Erreur');
+    }
+
+    /* ── Load Users ──────────────────────────────────────────── */
+    async function loadUsers() {
+      const res = await apiFetch('GET', '/users?limit=50');
+      const tbody = document.getElementById('usersBody');
+      const cnt = document.getElementById('usersCount');
+      if (!res.success || !res.data.length) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:#607D8B;">Aucun utilisateur</td></tr>';
+        return;
+      }
+      cnt && (cnt.textContent = `${res.total || res.data.length} utilisateurs inscrits`);
+      const roleLabel = { admin: 'Administrateur', pro: 'Compte Pro', user: 'Particulier' };
+      const roleClass = { admin: 'danger', pro: 'info', user: 'success' };
+      tbody.innerHTML = res.data.map(u => `
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#1565C0;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">${(u.firstName?.[0] || '') + (u.lastName?.[0] || '')}</div>
+        <div style="font-size:12px;font-weight:600;">${u.firstName} ${u.lastName}</div>
+      </div></td>
+      <td style="font-size:12px;color:#607D8B;">${u.email}</td>
+      <td style="font-size:12px;">${u.phone || '—'}</td>
+      <td><span class="admin-badge ${roleClass[u.role] || 'neutral'}">${roleLabel[u.role] || u.role}</span></td>
+      <td style="font-size:12px;">${formatDate(u.createdAt)}</td>
+      <td style="font-size:12px;">${u.lastLogin ? formatDate(u.lastLogin) : '—'}</td>
+      <td><span class="admin-badge ${u.isActive ? 'success' : 'neutral'}">${u.isActive ? 'Actif' : 'Inactif'}</span></td>
+      <td>
+        <button class="admin-action-btn" onclick="toggleUserStatus('${u._id}',${u.isActive})"><i class="ti ti-${u.isActive ? 'user-off' : 'user-check'}"></i></button>
+      </td>
+    </tr>`).join('');
+    }
+
+    async function toggleUserStatus(id, isActive) {
+      if (!confirm(`${isActive ? 'Désactiver' : 'Réactiver'} cet utilisateur ?`)) return;
+      const res = await apiFetch('PUT', `/users/${id}`, { isActive: !isActive });
+      if (res.success) loadUsers();
+    }
+
+    /* ── Load Quotes ─────────────────────────────────────────── */
+    async function loadQuotes() {
+      const res = await apiFetch('GET', '/quotes');
+      const tbody = document.getElementById('quotesBody');
+      if (!res.success || !res.data.length) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:#607D8B;">Aucun devis</td></tr>';
+        return;
+      }
+      tbody.innerHTML = res.data.map(q => `
+    <tr>
+      <td style="font-weight:600;color:#1565C0;font-size:12px;">${q.quoteNumber}</td>
+      <td style="font-size:12px;">${q.user?.firstName || ''} ${q.user?.lastName || ''}</td>
+      <td style="font-size:12px;color:#607D8B;">${q.company || q.user?.company || '—'}</td>
+      <td style="font-size:12px;">${formatDate(q.createdAt)}</td>
+      <td>${statusBadge(q.status)}</td>
+      <td style="font-size:11px;color:#607D8B;">${q.adminReply || '—'}</td>
+      <td>
+        <button class="admin-action-btn" onclick="replyQuote('${q._id}')"><i class="ti ti-send"></i> Répondre</button>
+      </td>
+    </tr>`).join('');
+    }
+
+    async function replyQuote(id) {
+      const reply = prompt('Votre réponse au devis :');
+      if (!reply) return;
+      const status = confirm('Accepter ce devis ?') ? 'accepted' : 'rejected';
+      const res = await apiFetch('PUT', `/quotes/${id}`, { adminReply: reply, status });
+      if (res.success) { alert('Réponse envoyée !'); loadQuotes(); }
+    }
+
+    /* ── CHARTS ──────────────────────────────────────────────── */
+    function initCharts() {
+      const days = Array.from({ length: 30 }, (_, i) => i + 1 + '');
+      const visitors = [420, 510, 480, 630, 710, 580, 490, 820, 940, 870, 760, 830, 900, 1040, 980, 870, 1120, 1380, 1240, 1090, 1180, 1420, 1550, 1310, 1200, 1480, 1620, 1390, 1750, 1840];
+      const orders = [18, 22, 19, 28, 34, 25, 21, 38, 45, 41, 35, 39, 44, 52, 48, 42, 56, 68, 61, 53, 58, 71, 78, 64, 59, 74, 81, 69, 88, 92];
+      const grid = 'rgba(0,0,0,0.05)', tick = '#90A4AE';
+
+      new Chart(document.getElementById('trafficChart'), {
+        data: {
+          labels: days, datasets: [
+            { type: 'line', label: 'Visiteurs', data: visitors, borderColor: '#1565C0', backgroundColor: 'rgba(21,101,192,0.07)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.4, fill: true, yAxisID: 'y' },
+            { type: 'bar', label: 'Commandes', data: orders, backgroundColor: 'rgba(198,40,40,0.7)', borderRadius: 3, yAxisID: 'y1' }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { display: false } }, scales: { x: { ticks: { autoSkip: true, maxTicksLimit: 10, color: tick, font: { size: 10 } }, grid: { display: false } }, y: { position: 'left', ticks: { color: tick, font: { size: 10 }, callback: v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v }, grid: { color: grid } }, y1: { position: 'right', ticks: { color: tick, font: { size: 10 } }, grid: { display: false } } } }
+      });
+
+      new Chart(document.getElementById('sourceChart'), {
+        type: 'doughnut',
+        data: { labels: ['Direct', 'Organique', 'Réseaux', 'Référents', 'Autres'], datasets: [{ data: [32, 28, 22, 11, 7], backgroundColor: ['#1565C0', '#2E7D32', '#E65100', '#C62828', '#90A4AE'], borderWidth: 3, borderColor: '#fff' }] },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => c.label + ': ' + c.parsed + '%' } } } }
+      });
+
+      new Chart(document.getElementById('revenueChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun'], datasets: [
+            { label: '2025', data: [31, 36, 42, 39, 48, null], backgroundColor: '#1565C0', borderRadius: 4 },
+            { label: '2024', data: [27, 30, 35, 34, 41, 38], backgroundColor: '#BBDEFB', borderRadius: 4 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: tick, font: { size: 10 } }, grid: { display: false } }, y: { ticks: { color: tick, font: { size: 10 }, callback: v => v + 'M' }, grid: { color: grid } } } }
+      });
+
+      new Chart(document.getElementById('langChart'), {
+        type: 'bar',
+        data: { labels: ['Français', 'Anglais', 'Arabe', 'Portugais', 'Espagnol', 'Allemand', 'Autres'], datasets: [{ label: 'Pages vues (k)', data: [42, 18, 9, 7, 6, 4, 5], backgroundColor: ['#1565C0', '#2E7D32', '#C62828', '#E65100', '#7B1FA2', '#90A4AE', '#B0BEC5'], borderRadius: 4 }] },
+        options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { ticks: { color: tick, font: { size: 10 }, callback: v => v + 'k' }, grid: { color: grid } }, y: { ticks: { color: tick, font: { size: 10 } }, grid: { display: false } } } }
+      });
+
+      const hours = Array.from({ length: 24 }, (_, h) => h + 'h');
+      const hdata = [12, 8, 5, 4, 6, 15, 42, 95, 148, 182, 210, 245, 268, 231, 198, 215, 242, 286, 310, 274, 198, 142, 88, 44];
+      new Chart(document.getElementById('hourChart'), {
+        type: 'line',
+        data: { labels: hours, datasets: [{ label: 'Visiteurs', data: hdata, borderColor: '#1565C0', backgroundColor: 'rgba(21,101,192,0.07)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 3, tension: 0.4, fill: true }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { autoSkip: true, maxTicksLimit: 8, color: tick, font: { size: 10 } }, grid: { display: false } }, y: { ticks: { color: tick, font: { size: 10 } }, grid: { color: grid } } } }
+      });
+
+      new Chart(document.getElementById('usersChart'), {
+        type: 'pie',
+        data: { labels: ['Particuliers', 'Comptes Pro', 'Admins'], datasets: [{ data: [68, 29, 3], backgroundColor: ['#2E7D32', '#1565C0', '#C62828'], borderWidth: 3, borderColor: '#fff' }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 8 } } } }
+      });
+    }
+
+    /* ── INIT ────────────────────────────────────────────────── */
+    async function loadCategories() {
+      try {
+        const res = await apiFetch('GET', '/categories');
+        if (res.success && res.data) {
+          window._categories = res.data;
+          const formSelect = document.getElementById('pCategory');
+          const filterSelect = document.getElementById('productCatFilter');
+          
+          if (formSelect) {
+            formSelect.innerHTML = '<option value="">Choisir...</option>' + 
+              res.data.map(c => `<option value="${c._id}">${c.name}</option>`).join('');
+          }
+          if (filterSelect) {
+            filterSelect.innerHTML = '<option value="">Toutes les catégories</option>' + 
+              res.data.map(c => `<option value="${c._id}">${c.name}</option>`).join('');
+          }
+        }
+      } catch (err) {
+        console.error('Erreur chargement catégories:', err);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!getToken()) { window.location.href = '/#auth'; return; }
+      // Vérifier le rôle admin côté serveur
+      try {
+        const meRes = await apiFetch('GET', '/auth/me');
+        if (!meRes.success || meRes.data?.role !== 'admin') {
+          alert('Accès réservé aux administrateurs.');
+          window.location.href = '/';
+          return;
+        }
+      } catch(e) {
+        window.location.href = '/#auth';
+        return;
+      }
+      await loadCategories();
+      await loadDashboard();
+      initCharts();
+    });
+  </script>
+</body>
+
+</html>

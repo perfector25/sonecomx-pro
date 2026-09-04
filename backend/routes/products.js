@@ -1,0 +1,13 @@
+const express = require('express');
+const router = express.Router();
+const pc = require('../controllers/productController');
+const { protect, authorize, optionalAuth } = require('../middleware/auth');
+router.get('/featured', pc.getFeatured);
+router.get('/', optionalAuth, pc.getProducts);
+router.get('/:id/related', pc.getRelated);
+router.get('/:id', optionalAuth, pc.getProduct);
+router.post('/', protect, authorize('admin'), pc.createProduct);
+router.put('/:id', protect, authorize('admin'), pc.updateProduct);
+router.delete('/:id', protect, authorize('admin'), pc.deleteProduct);
+router.post('/:id/reviews', protect, pc.addReview);
+module.exports = router;
