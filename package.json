@@ -27,6 +27,7 @@
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
+    "@railway/cli": "^5.49.1",
     "nodemon": "^3.0.2"
   }
 }

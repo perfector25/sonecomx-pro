@@ -131,7 +131,8 @@ const seedAdmin = async () => {
 
 // MongoDB connection
 const PORT = process.env.PORT || 5000;
-mongoose.connect(process.env.MONGODB_URI)
+const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URL || process.env.MONGODB_URL;
+mongoose.connect(mongoUri)
   .then(async () => {
     console.log('✅ MongoDB connecté');
     await seedCategories();
