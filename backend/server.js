@@ -132,9 +132,15 @@ const seedAdmin = async () => {
 // MongoDB connection
 const PORT = process.env.PORT || 5000;
 const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URL || process.env.MONGODB_URL;
+
+if (!mongoUri) {
+  console.error("❌ Erreur critique : Aucune variable MONGODB_URI n'a été trouvée dans les variables d'environnement.");
+  console.error("👉 Veuillez ajouter 'MONGODB_URI' dans l'onglet 'Environment' de votre service sur Render (ex: mongodb+srv://...).");
+}
+
 mongoose.connect(mongoUri)
   .then(async () => {
-    console.log('✅ MongoDB connecté');
+    console.log('✅ MongoDB connecté avec succès');
     await seedCategories();
     await seedAdmin();
     app.listen(PORT, () =>
@@ -142,7 +148,7 @@ mongoose.connect(mongoUri)
     );
   })
   .catch(err => {
-    console.error('❌ Erreur MongoDB:', err.message);
+    console.error('❌ Erreur de connexion MongoDB:', err.message);
     process.exit(1);
   });
 

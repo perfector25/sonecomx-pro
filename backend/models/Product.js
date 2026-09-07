@@ -37,7 +37,7 @@ const ProductSchema = new mongoose.Schema({
   weight:      { type: Number, default: 0 },
   dimensions:  { length: Number, width: Number, height: Number },
   createdAt:   { type: Date, default: Date.now }
-}, { timestamps: true });
+}, { timestamps: true, suppressReservedKeysWarning: true });
 
 // Auto-generate slug
 ProductSchema.pre('save', function(next) {
