@@ -1034,8 +1034,8 @@ const Pages = {
   loginForm: () => `
     <div class="auth-title">Espace Administration</div>
     <div class="auth-sub">Connexion réservée aux administrateurs de la plateforme SONECOMX PRO</div>
-    <div class="form-group"><label class="form-label">${t('emailLabel')}</label><input class="form-input" type="email" id="loginEmail" placeholder="admin@sonecomxpro.cm"></div>
-    <div class="form-group"><label class="form-label">${t('passwordLabel')}</label><input class="form-input" type="password" id="loginPassword" placeholder="••••••••"></div>
+    <div class="form-group"><label class="form-label">${t('emailLabel')}</label><input class="form-input" type="email" id="loginEmail" placeholder="admin@sonecomxpro.cm" onkeydown="if(event.key==='Enter') App.login()"></div>
+    <div class="form-group"><label class="form-label">${t('passwordLabel')}</label><input class="form-input" type="password" id="loginPassword" placeholder="••••••••" onkeydown="if(event.key==='Enter') App.login()"></div>
     <button class="btn-primary" style="width:100%;justify-content:center;padding:12px;" onclick="App.login()"><i class="ti ti-login"></i> ${t('login')}</button>`,
 
   /* ── PROFILE ──────────────────────────────────────────── */
@@ -1058,7 +1058,7 @@ const Pages = {
         { tab: 'wishlist', icon: 'ti-heart', label: t('favorites') },
         { tab: 'security', icon: 'ti-lock', label: t('security') },
       ].map(item => `<div class="profile-nav-item ${tab === item.tab ? 'active' : ''}" onclick="Router.go('profile','tab=${item.tab}')"><i class="ti ${item.icon}"></i>${item.label}</div>`).join('')}
-          ${State.user.role === 'admin' ? `<div class="profile-nav-item" onclick="Router.go('admin')" style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px;"><i class="ti ti-layout-dashboard"></i>${t('adminDashboard')}</div>` : ''}
+          ${State.user.role === 'admin' ? `<div class="profile-nav-item" onclick="window.location.href='/admin.html'" style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px;"><i class="ti ti-layout-dashboard"></i>${t('adminDashboard')}</div>` : ''}
           <div class="profile-nav-item" onclick="Auth.logout()" style="color:var(--red);margin-top:8px;border-top:1px solid var(--border);padding-top:8px;"><i class="ti ti-logout"></i>${t('logout')}</div>
         </div>
         <div class="profile-content" id="profileContent"><div class="spinner"></div></div>
@@ -1777,7 +1777,7 @@ const Router = {
     else if (page === 'profile') await Pages.profile(params);
     else if (page === 'quote') Pages.quote();
     else if (page === 'checkout') Pages.checkout();
-    else if (page === 'admin') await Pages.admin();
+    else if (page === 'admin') { window.location.href = '/admin.html'; return; }
     else if (page === 'about') Pages.about();
     else await Pages.home();
     Auth.updateUI();
@@ -2249,22 +2249,15 @@ const App = {
   },
 
   async login() {
-    const email = document.getElementById('loginEmail')?.value;
-    const password = document.getElementById('loginPassword')?.value;
-    if (!email || !password) { Toast.show('Remplissez tous les champs', 'warning'); return; }
-    const result = await Auth.login(email, password);
-    if (result === true) { Toast.show('Connexion réussie ! Bienvenue 👋', 'success'); Router.go('home'); }
-    else Toast.show(result, 'error');
-  },
-
-  async login() {
-    const email = document.getElementById('loginEmail')?.value;
+    const email = document.getElementById('loginEmail')?.value?.trim();
     const password = document.getElementById('loginPassword')?.value;
     if (!email || !password) { Toast.show('Remplissez tous les champs', 'warning'); return; }
     const result = await Auth.login(email, password);
     if (result === true) {
-      Toast.show('Connexion administrateur réussie ! 👋', 'success');
-      Router.go('admin');
+      Toast.show('Connexion administrateur réussie ! 👋 Redirection...', 'success');
+      setTimeout(() => {
+        window.location.href = '/admin.html';
+      }, 400);
     }
     else Toast.show(result, 'error');
   },

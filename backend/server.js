@@ -67,6 +67,11 @@ app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/reviews',   require('./routes/reviews'));
 app.use('/api/upload',    require('./routes/upload'));
 
+// Admin page direct route
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/public/admin.html'));
+});
+
 // Frontend catch-all — serve SPA
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/public/index.html'));
@@ -133,11 +138,10 @@ const seedAdmin = async () => {
 
 // MongoDB connection
 const PORT = process.env.PORT || 5000;
-const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URL || process.env.MONGODB_URL;
+const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI || process.env.MONGO_URL || process.env.MONGODB_URL || 'mongodb+srv://parfaityves504_db_user:Bellatherese03@cluster0.j6xggjn.mongodb.net/sonecomxpro?retryWrites=true&w=majority&appName=Cluster0';
 
 if (!mongoUri) {
   console.error("❌ Erreur critique : Aucune variable MONGODB_URI n'a été trouvée dans les variables d'environnement.");
-  console.error("👉 Veuillez ajouter 'MONGODB_URI' dans l'onglet 'Environment' de votre service sur Render (ex: mongodb+srv://...).");
 }
 
 mongoose.connect(mongoUri)
