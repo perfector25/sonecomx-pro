@@ -12,7 +12,7 @@ const optionalAuth = async (req, res, next) => {
   }
   if (token) {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'sonecomx_secret_jwt_2025');
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'sonecomx_pro_super_secret_jwt_key_2025_secure_98432849283');
       req.user = await User.findById(decoded.id);
     } catch (e) {}
   }

@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+const JWT_SECRET = process.env.JWT_SECRET || 'sonecomx_pro_super_secret_jwt_key_2025_secure_98432849283';
+
 exports.protect = async (req, res, next) => {
   let token;
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
@@ -10,7 +12,7 @@ exports.protect = async (req, res, next) => {
   }
   if (!token) return res.status(401).json({ success: false, message: 'Non autorisé, token manquant' });
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.user = await User.findById(decoded.id);
     if (!req.user || !req.user.isActive) return res.status(401).json({ success: false, message: 'Compte désactivé' });
     next();
@@ -32,7 +34,7 @@ exports.optionalAuth = async (req, res, next) => {
   else if (req.cookies?.token) token = req.cookies.token;
   if (token) {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, JWT_SECRET);
       req.user = await User.findById(decoded.id);
     } catch {}
   }

@@ -3,8 +3,9 @@ const jwt = require('jsonwebtoken');
 
 const sendToken = (user, statusCode, res) => {
   const token = user.getSignedToken();
+  const cookieDays = parseInt(process.env.JWT_COOKIE_EXPIRE, 10) || 30;
   const options = {
-    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
+    expires: new Date(Date.now() + cookieDays * 24 * 60 * 60 * 1000),
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production'
   };

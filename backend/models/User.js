@@ -40,8 +40,10 @@ UserSchema.methods.matchPassword = async function(entered) {
 };
 
 UserSchema.methods.getSignedToken = function() {
-  return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE
+  const secret = process.env.JWT_SECRET || 'sonecomx_pro_super_secret_jwt_key_2025_secure_98432849283';
+  const expire = process.env.JWT_EXPIRE || '30d';
+  return jwt.sign({ id: this._id, role: this.role }, secret, {
+    expiresIn: expire
   });
 };
 
