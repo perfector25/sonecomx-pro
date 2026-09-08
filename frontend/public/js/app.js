@@ -53,7 +53,7 @@ const Cart = {
   save() { localStorage.setItem('snx_cart', JSON.stringify(State.cart)); Cart.updateBadge(); },
   updateBadge() {
     const total = State.cart.reduce((s, i) => s + i.qty, 0);
-    document.querySelectorAll('.cart-count').forEach(el => { el.textContent = total; el.style.display = total ? '' : 'none'; });
+    document.querySelectorAll('.cart-count, .mobile-cart-badge').forEach(el => { el.textContent = total; el.style.display = total ? '' : 'none'; });
   },
   add(product, qty = 1) {
     const existing = State.cart.find(i => i._id === product._id);
@@ -985,6 +985,20 @@ const Pages = {
           <div class="spinner" style="grid-column:1/-1"></div>
         </div>
       </div>
+      <div class="mobile-product-sticky-bar">
+        <div class="mobile-product-sticky-price">
+          <div class="sticky-price-val">${fmt(p.price)}</div>
+          <div class="sticky-price-label">${p.stock > 0 ? t('inStock') : t('outOfStock')}</div>
+        </div>
+        <div class="mobile-product-sticky-actions">
+          <button class="sticky-quote-btn" onclick="Router.go('quote')">
+            <i class="ti ti-file-invoice"></i> Devis
+          </button>
+          <button class="sticky-add-btn" onclick="Cart.add({_id:'${p._id}',name:'${p.name.replace(/'/g, "\\'")}',brand:'${p.brand || ''}',price:${p.price},icon:'${PRODUCT_ICONS[p.brand] || '🔧'}'},parseInt(document.getElementById('qtyInput')?.value || 1))">
+            <i class="ti ti-file-plus"></i> ${t('addToCart')}
+          </button>
+        </div>
+      </div>
       ${Pages.footer()}`;
 
     // Load related products
@@ -1753,6 +1767,8 @@ const Router = {
   async render() {
     const { page, params } = Router.parse();
     window.scrollTo(0, 0);
+    App.closeMobileDrawer();
+    App.updateMobileNavActive(page);
     if (page === 'home') await Pages.home();
     else if (page === 'catalogue') await Pages.catalogue(params);
     else if (page === 'product') await Pages.product(params);
@@ -1777,6 +1793,8 @@ const App = {
     await App.fetchCategories();
     Cart.updateBadge();
     App.renderNav();
+    App.renderMobileTabBar();
+    App.renderMobileDrawer();
     App.initLang();
     window.addEventListener('hashchange', Router.render);
     document.addEventListener('click', e => {
@@ -2016,6 +2034,116 @@ const App = {
       </div>`;
 
     Cart.updateBadge();
+  },
+
+  renderMobileTabBar() {
+    const tabEl = document.getElementById('mobileTabBar');
+    if (!tabEl) return;
+    const total = State.cart.reduce((s, i) => s + i.qty, 0);
+    const { page } = Router.parse();
+    tabEl.innerHTML = `
+      <button class="mobile-tab-btn ${page === 'home' || !page ? 'active' : ''}" onclick="Router.go('home')" data-tab="home">
+        <i class="ti ti-home"></i>
+        <span>${t('home')}</span>
+      </button>
+      <button class="mobile-tab-btn ${page === 'catalogue' ? 'active' : ''}" onclick="Router.go('catalogue')" data-tab="catalogue">
+        <i class="ti ti-layout-grid"></i>
+        <span>${t('catalogueTitle')}</span>
+      </button>
+      <button class="mobile-tab-btn" onclick="App.toggleMobileDrawer()" data-tab="drawer" id="mobileDrawerTabBtn">
+        <div class="mobile-tab-highlight-icon"><i class="ti ti-category"></i></div>
+        <span>Rayons</span>
+      </button>
+      <button class="mobile-tab-btn ${page === 'quote' ? 'active' : ''}" onclick="Router.go('quote')" data-tab="quote">
+        <i class="ti ti-file-invoice"></i>
+        <span>${t('proQuote')}</span>
+      </button>
+      <button class="mobile-tab-btn ${page === 'checkout' ? 'active' : ''}" onclick="Cart.open()" data-tab="cart">
+        <div style="position:relative;display:inline-flex;">
+          <i class="ti ti-clipboard-list"></i>
+          <span class="mobile-cart-badge" id="mobileCartBadge" style="${total ? '' : 'display:none;'}">${total}</span>
+        </div>
+        <span>Sélection</span>
+      </button>
+    `;
+  },
+
+  renderMobileDrawer() {
+    const drawerEl = document.getElementById('mobileDrawer');
+    if (!drawerEl) return;
+    const cats = State.categories.length ? State.categories : CATEGORIES;
+    drawerEl.innerHTML = `
+      <div class="mobile-drawer-header">
+        <div class="mobile-drawer-brand">
+          <img src="/images/logo.png?v=2" alt="SONECOMX PRO" style="max-height:36px;object-fit:contain;">
+        </div>
+        <button class="mobile-drawer-close" onclick="App.closeMobileDrawer()"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="mobile-drawer-search">
+        <i class="ti ti-search"></i>
+        <input type="text" placeholder="${t('search')}" onkeydown="if(event.key==='Enter'){App.doMobileSearch(this.value);App.closeMobileDrawer();}">
+      </div>
+      <div class="mobile-drawer-section-title">
+        <i class="ti ti-layout-grid"></i> ${t('allDeptsTitle')}
+      </div>
+      <div class="mobile-drawer-cats">
+        ${cats.map(c => `
+          <div class="mobile-drawer-cat-item" onclick="Router.go('catalogue','cat=${encodeURIComponent(c.name)}');App.closeMobileDrawer();">
+            <div class="mobile-drawer-cat-icon">${catIcon(c.icon, '24px')}</div>
+            <div class="mobile-drawer-cat-info">
+              <div class="mobile-drawer-cat-name">${c.name}</div>
+              <div class="mobile-drawer-cat-count">${typeof c.productCount !== 'undefined' ? c.productCount : c.count} références</div>
+            </div>
+            <i class="ti ti-chevron-right" style="color:var(--text-light);font-size:14px;"></i>
+          </div>
+        `).join('')}
+      </div>
+      <div class="mobile-drawer-footer">
+        <div class="mobile-drawer-links">
+          <a onclick="Router.go('promotions');App.closeMobileDrawer();"><i class="ti ti-tag"></i> ${t('promotions')}</a>
+          <a onclick="Router.go('quote');App.closeMobileDrawer();"><i class="ti ti-file-invoice"></i> ${t('proQuote')}</a>
+          <a onclick="Router.go('about');App.closeMobileDrawer();"><i class="ti ti-info-circle"></i> ${t('aboutUs')}</a>
+        </div>
+        <div class="mobile-drawer-contact">
+          <a href="tel:+237699000000" class="mobile-contact-btn"><i class="ti ti-phone"></i> Appeler SONECOMX</a>
+          <a href="https://wa.me/237699000000" target="_blank" class="mobile-contact-btn whatsapp"><i class="ti ti-brand-whatsapp"></i> WhatsApp Direct</a>
+        </div>
+      </div>
+    `;
+  },
+
+  toggleMobileDrawer() {
+    const drawer = document.getElementById('mobileDrawer');
+    const overlay = document.getElementById('mobileDrawerOverlay');
+    if (drawer && overlay) {
+      const isOpen = drawer.classList.toggle('open');
+      overlay.classList.toggle('open', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    }
+  },
+
+  openMobileDrawer() {
+    document.getElementById('mobileDrawer')?.classList.add('open');
+    document.getElementById('mobileDrawerOverlay')?.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  },
+
+  closeMobileDrawer() {
+    document.getElementById('mobileDrawer')?.classList.remove('open');
+    document.getElementById('mobileDrawerOverlay')?.classList.remove('open');
+    document.body.style.overflow = '';
+  },
+
+  doMobileSearch(val) {
+    if (val && val.trim()) Router.go('catalogue', `search=${encodeURIComponent(val.trim())}`);
+  },
+
+  updateMobileNavActive(page) {
+    document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
+      const tab = btn.getAttribute('data-tab');
+      if (tab === 'drawer') return;
+      btn.classList.toggle('active', tab === page || (!page && tab === 'home'));
+    });
   },
 
   initLang() {

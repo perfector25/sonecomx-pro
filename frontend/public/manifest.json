@@ -1,0 +1,41 @@
+﻿{
+  "name": "SONECOMX PRO — La maison des professionnels",
+  "short_name": "SONECOMX PRO",
+  "description": "Quincaillerie générale, outillage professionnel, EPI et matériel de chantier.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#1565C0",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Catalogue",
+      "url": "/#catalogue",
+      "description": "Parcourir le catalogue complet"
+    },
+    {
+      "name": "Demande de Devis",
+      "url": "/#quote",
+      "description": "Demander un devis en ligne sous 24h"
+    },
+    {
+      "name": "Promotions",
+      "url": "/#promotions",
+      "description": "Voir les offres du moment"
+    }
+  ]
+}

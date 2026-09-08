@@ -2,13 +2,24 @@
 <html lang="fr" dir="ltr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <meta name="description" content="SONECOMX PRO SARL — La maison des professionnels. Quincaillerie générale, outillage, EPI, matériel de chantier et industriel.">
   <meta name="keywords" content="quincaillerie, outillage, EPI, chantier, Cameroun, Yaoundé, Douala, visserie, électricité, plomberie">
   <meta property="og:title" content="SONECOMX PRO — La maison des professionnels">
   <meta property="og:description" content="Outillage professionnel, quincaillerie générale, EPI et matériel de chantier pour les entreprises et particuliers au Cameroun.">
   <meta property="og:type" content="website">
   <title>SONECOMX PRO SARL — La maison des professionnels</title>
+  
+  <!-- PWA & Mobile Meta Tags (iOS & Android) -->
+  <meta name="theme-color" content="#1565C0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SONECOMX PRO">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/images/logo.png">
+
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231565C0'/><text y='24' x='4' font-size='20' font-family='Arial' font-weight='900' fill='white'>S</text></svg>">
   <!-- Tabler Icons CDN -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
@@ -19,6 +30,10 @@
 
   <!-- Navigation (rendered by JS) -->
   <header id="nav"></header>
+
+  <!-- Mobile Drawer Overlay & Sidebar -->
+  <div class="mobile-drawer-overlay" id="mobileDrawerOverlay" onclick="App.closeMobileDrawer()"></div>
+  <aside class="mobile-drawer" id="mobileDrawer" aria-label="Menu des rayons"></aside>
 
   <!-- Cart Sidebar -->
   <div class="cart-overlay" id="cartOverlay" onclick="Cart.close()"></div>
@@ -32,9 +47,20 @@
     <div class="spinner"></div>
   </main>
 
+  <!-- Mobile Bottom Tab Bar (iOS / Android Navigation) -->
+  <nav class="mobile-tab-bar" id="mobileTabBar" aria-label="Navigation mobile"></nav>
+
   <!-- Three.js 3D Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <!-- App JS -->
   <script src="/js/app.js"></script>
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>
