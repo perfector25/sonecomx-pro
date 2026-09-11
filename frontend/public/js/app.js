@@ -205,7 +205,9 @@ const CATEGORIES = [
   { name: 'Pneu & Huile', icon: '/images/categories/pneu et huile.png', count: '390' },
   { name: 'Portatif & Accessoires', icon: '/images/categories/portatif-accessoires.png', count: '820' },
   { name: 'Soudure', icon: '/images/categories/soudure.png', count: '310' },
-  { name: 'Consommable & Logistique', icon: '/images/categories/conssomable et logistique.png', count: '1 450' }
+  { name: 'Consommable & Logistique', icon: '/images/categories/conssomable et logistique.png', count: '1 450' },
+  { name: 'Électroménager', icon: '/images/categories/electromenager.png', count: '450' },
+  { name: 'Plomberie industrielle', icon: '/images/categories/plomberie-industrielle.png', count: '680' }
 ];
 
 const PRODUCT_ICONS = { Makita: '🔩', Bosch: '⚙️', Stanley: '🔧', Legrand: '💡', Fischer: '🔩', Uvex: '🪖', Stabila: '📐', Sikkens: '🎨', Vachette: '🔐', Grohe: '🚿', Facom: '🪛', Petzl: '🔦' };

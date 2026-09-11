@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+  <g fill="#5C6670">
+    <!-- Machine Frame -->
+    <rect x="220" y="140" width="560" height="720" rx="70" fill="none" stroke="#5C6670" stroke-width="60" />
+    <!-- Control Divider -->
+    <line x1="220" y1="330" x2="780" y2="330" stroke="#5C6670" stroke-width="40" />
+    <!-- Controls -->
+    <circle cx="350" cy="235" r="45" fill="#5C6670" />
+    <circle cx="350" cy="235" r="20" fill="#ffffff" />
+    <rect x="460" y="210" width="140" height="50" rx="16" fill="#5C6670" />
+    <circle cx="670" cy="235" r="25" fill="#5C6670" />
+    <!-- Door Hub -->
+    <circle cx="500" cy="580" r="180" fill="none" stroke="#5C6670" stroke-width="50" />
+    <circle cx="500" cy="580" r="120" fill="#5C6670" />
+    <!-- Glass Reflection & Wave -->
+    <path d="M 420 570 Q 470 530 520 570 Q 560 610 575 580 A 120 120 0 0 1 425 580 Z" fill="#ffffff" opacity="0.9" />
+    <circle cx="460" cy="515" r="14" fill="#ffffff" />
+    <!-- Base Feet -->
+    <rect x="280" y="855" width="70" height="35" rx="10" fill="#5C6670" />
+    <rect x="650" y="855" width="70" height="35" rx="10" fill="#5C6670" />
+  </g>
+</svg>

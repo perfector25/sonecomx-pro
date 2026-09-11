@@ -106,10 +106,12 @@ const seedCategories = async () => {
         { name: 'Pneu & Huile',                 icon: '/images/categories/pneu et huile.png',        order: 13, productCount: 390  },
         { name: 'Portatif & Accessoires',       icon: '/images/categories/portatif-accessoires.png', order: 14, productCount: 820  },
         { name: 'Soudure',                      icon: '/images/categories/soudure.png',               order: 15, productCount: 310  },
-        { name: 'Consommable & Logistique',     icon: '/images/categories/conssomable et logistique.png', order: 16, productCount: 1450 }
+        { name: 'Consommable & Logistique',     icon: '/images/categories/conssomable et logistique.png', order: 16, productCount: 1450 },
+        { name: 'Électroménager',              icon: '/images/categories/electromenager.png',        order: 17, productCount: 450  },
+        { name: 'Plomberie industrielle',       icon: '/images/categories/plomberie-industrielle.png', order: 18, productCount: 680  }
       ];
       await Category.create(categories);
-      console.log('🌱 Base de données auto-seedée avec les 16 catégories.');
+      console.log('🌱 Base de données auto-seedée avec les 18 catégories.');
     }
   } catch (err) {
     console.error('❌ Erreur auto-seed catégories:', err.message);
