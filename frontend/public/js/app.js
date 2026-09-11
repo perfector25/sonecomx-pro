@@ -241,7 +241,7 @@ const Pages = {
         <div class="cat-grid">${(State.categories.length ? State.categories : CATEGORIES).map(c => `
           <div class="cat-card" onclick="Router.go('catalogue','cat=${encodeURIComponent(c.name)}')">
             <span class="cat-icon">
-              ${catIcon(c.icon, c.icon && (c.icon.includes('.') || c.icon.includes('/')) ? '96px' : '36px')}
+              ${catIcon(c.icon, c.icon && (c.icon.includes('.') || c.icon.includes('/')) ? '86px' : '36px')}
             </span>
             <div class="cat-name">${c.name}</div>
             <div class="cat-count">${typeof c.productCount !== 'undefined' ? c.productCount : c.count} réf.</div>
