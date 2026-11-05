@@ -1,3 +1,5 @@
+const dns = require('dns');
+try { dns.setServers(['8.8.8.8', '1.1.1.1']); } catch (e) {}
 require('dotenv').config({ path: require('path').join(__dirname, '../../.env') });
 const mongoose = require('mongoose');
 const User = require('../models/User');
@@ -20,12 +22,18 @@ const categories = [
   { name: 'Pneu & Huile',                 icon: '/images/categories/pneu et huile.png',        order: 13, productCount: 390  },
   { name: 'Portatif & Accessoires',       icon: '/images/categories/portatif-accessoires.png', order: 14, productCount: 820  },
   { name: 'Soudure',                      icon: '/images/categories/soudure.png',               order: 15, productCount: 310  },
-  { name: 'Consommable & Logistique',     icon: '/images/categories/conssomable et logistique.png', order: 16, productCount: 1450 }
+  { name: 'Consommable & Logistique',     icon: '/images/categories/conssomable et logistique.png', order: 16, productCount: 1450 },
+  { name: 'Électroménager',              icon: '/images/categories/electromenager.png',        order: 17, productCount: 450  },
+  { name: 'Plomberie industrielle',       icon: '/images/categories/plomberie-industrielle.png', order: 18, productCount: 680  }
 ];
 
 const seed = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI || process.env.MONGO_URL || process.env.MONGODB_URL;
+    if (!mongoUri) {
+      throw new Error("Aucune variable d'environnement MONGODB_URI ou MONGO_URI trouvée");
+    }
+    await mongoose.connect(mongoUri);
     console.log('✅ MongoDB connecté');
 
     await User.deleteMany();

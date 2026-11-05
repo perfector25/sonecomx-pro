@@ -68,13 +68,17 @@ exports.getProducts = async (req, res) => {
 
 exports.getProduct = async (req, res) => {
   try {
-    const product = await Product.findOne({
-      $or: [{ _id: req.params.id }, { slug: req.params.id }],
-      isActive: true
-    }).populate('category','name slug').populate('reviews.user','firstName lastName avatar');
+    const isId = mongoose.Types.ObjectId.isValid(req.params.id);
+    const query = isId
+      ? { $or: [{ _id: req.params.id }, { slug: req.params.id }], isActive: true }
+      : { slug: req.params.id, isActive: true };
+
+    const product = await Product.findOne(query)
+      .populate('category', 'name slug')
+      .populate('reviews.user', 'firstName lastName avatar');
 
     if (!product) return res.status(404).json({ success: false, message: 'Produit introuvable' });
-    product.views += 1;
+    product.views = (product.views || 0) + 1;
     await product.save({ validateBeforeSave: false });
     res.status(200).json({ success: true, data: product });
   } catch (err) {
@@ -121,6 +125,9 @@ exports.updateProduct = async (req, res) => {
       }
     }
 
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({ success: false, message: 'Identifiant produit invalide' });
+    }
     const oldProduct = await Product.findById(req.params.id);
     if (!oldProduct) return res.status(404).json({ success: false, message: 'Produit introuvable' });
 
@@ -140,6 +147,9 @@ exports.updateProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({ success: false, message: 'Identifiant produit invalide' });
+    }
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ success: false, message: 'Produit introuvable' });
     product.isActive = false;
@@ -155,6 +165,9 @@ exports.deleteProduct = async (req, res) => {
 
 exports.addReview = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({ success: false, message: 'Identifiant produit invalide' });
+    }
     const { rating, comment } = req.body;
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ success: false, message: 'Produit introuvable' });
@@ -181,7 +194,12 @@ exports.getFeatured = async (req, res) => {
 
 exports.getRelated = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const isId = mongoose.Types.ObjectId.isValid(req.params.id);
+    const query = isId
+      ? { $or: [{ _id: req.params.id }, { slug: req.params.id }] }
+      : { slug: req.params.id };
+
+    const product = await Product.findOne(query);
     if (!product) return res.status(404).json({ success: false, message: 'Produit introuvable' });
     const related = await Product.find({
       category: product.category,

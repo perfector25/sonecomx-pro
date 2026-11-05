@@ -71,12 +71,25 @@ exports.getMyOrders = async (req, res) => {
 
 exports.getOrder = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id)
+    const isId = mongoose.Types.ObjectId.isValid(req.params.id);
+    const query = isId
+      ? { $or: [{ _id: req.params.id }, { orderNumber: req.params.id }] }
+      : { orderNumber: req.params.id };
+
+    const order = await Order.findOne(query)
       .populate('user', 'firstName lastName email phone')
       .populate('items.product', 'name thumbnail slug sku');
+
     if (!order) return res.status(404).json({ success: false, message: 'Commande introuvable' });
-    if (order.user._id.toString() !== req.user.id && req.user.role !== 'admin')
+
+    // Permettre l'accès à l'admin ou au propriétaire de la commande
+    const isOwner = order.user && order.user._id && order.user._id.toString() === req.user.id;
+    const isAdmin = req.user && req.user.role === 'admin';
+
+    if (!isOwner && !isAdmin) {
       return res.status(403).json({ success: false, message: 'Non autorisé' });
+    }
+
     res.status(200).json({ success: true, data: order });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -105,7 +118,10 @@ exports.getAllOrders = async (req, res) => {
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { status, comment, trackingNumber } = req.body;
-    const order = await Order.findById(req.params.id);
+    const isId = mongoose.Types.ObjectId.isValid(req.params.id);
+    const query = isId ? { _id: req.params.id } : { orderNumber: req.params.id };
+
+    const order = await Order.findOne(query);
     if (!order) return res.status(404).json({ success: false, message: 'Commande introuvable' });
 
     order.status = status;
